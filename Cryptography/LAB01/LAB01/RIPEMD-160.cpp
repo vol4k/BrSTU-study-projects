@@ -118,7 +118,7 @@ namespace RIPEMD_160 {
 	{
 		for (auto i = 0; i < right; i++)
 		{
-			UINT temp = (left & 0x80000000) >> 31;
+			auto temp = left >> 31;
 			left <<= 1;
 			left += temp;
 		}
@@ -130,10 +130,10 @@ namespace RIPEMD_160 {
 		switch (index)
 		{
 		case 0: return x ^ y ^ z;
-		case 1: return (x & y) | (~x & z);
-		case 2: return (x | ~y) ^ z;
-		case 3: return (x & z) | (y & ~z);
-		case 4: return x ^ (y | ~z);
+		case 1: return (x & y) | ((~x) & z);
+		case 2: return (x | (~y)) ^ z;
+		case 3: return (x & z) | (y & (~z));
+		case 4: return x ^ (y | (~z));
 		default:return 0;
 		}
 	}
@@ -153,37 +153,37 @@ namespace RIPEMD_160 {
 
 			for (int j = 0; j < 80; j++)
 			{
-				T = A1 + f(j / 16, B1, C1, D1);
+				T  = A1 + f(j / 16, B1, C1, D1);
 				T += word(M[i][R.first.at(j)]);
 				T += K[j / 16].first;
-				T = rol(T, S.first[j]);
+				T  = rol(T, S.first[j]);
 				T += E1;
 				
-				A1 = E1; 
-				E1 = D1; 
+				A1 = E1;
+				E1 = D1;
 				D1 = rol(C1, 10);
 				C1 = B1; 
 				B1 = T;
 				
-				T = A2 + f((79 - j) / 16, B2, C2, D2);
+				T  = A2 + f((79 - j) / 16, B2, C2, D2);
 				T += word(M[i][R.second.at(j)]);
 				T += K[j / 16].second;
-				T = rol(T, S.second[j]);
+				T  = rol(T, S.second[j]);
 				T += E2;
 
-				A2 = E2; 
-				E2 = D2; 
-				D2 = rol(C2, 10); 
+				A2 = E2;
+				E2 = D2;
+				D2 = rol(C2, 10);
 				C2 = B2; 
 				B2 = T;
 			}
 
-			T = h[1] + C1 + D2;
+			D2 += h[1] + C1;
 			h[1] = h[2] + D1 + E2;
 			h[2] = h[3] + E1 + A2;
-			h[3] = h[4] + A1 + B2; 
-			h[4] = h[0] + B1 + C2; 
-			h[0] = T;
+			h[3] = h[4] + A1 + B2;
+			h[4] = h[0] + B1 + C2;
+			h[0] = D2;
 
 		}
 
