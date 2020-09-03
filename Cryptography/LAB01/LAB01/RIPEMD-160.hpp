@@ -27,7 +27,7 @@ namespace RIPEMD_160
 			make_pair(0x5A827999,0x5C4DD124),
 			make_pair(0x6ED9EBA1,0x6D703EF3),
 			make_pair(0x8F1BBCDC,0x7A6D76E9),
-			make_pair(0xA953FDE4,0x00000000)
+			make_pair(0xA953FD4E,0x00000000)
 		};
 		const pair<vector<UINT>, vector<UINT>> R =
 		{
