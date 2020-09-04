@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <cmath>
+#include <iomanip>
 
 namespace RIPEMD_160 {
 
@@ -72,6 +73,8 @@ namespace RIPEMD_160 {
 
 			// complement message size
 
+			size <<= 3; // I don't now why it's working
+
 			M.back().push_back(
 				{
 					static_cast<char>((size << (0 * 8)) & 0xFF),
@@ -116,13 +119,7 @@ namespace RIPEMD_160 {
 
 	UINT RIPEMD::rol(UINT left, const UINT& right)
 	{
-		for (auto i = 0; i < right; i++)
-		{
-			auto temp = left >> 31;
-			left <<= 1;
-			left += temp;
-		}
-		return left;
+		return ((left << right) | (left >> (32 - right)));
 	}
 
 	UINT RIPEMD::f(const UINT& index, const UINT& x, const UINT& y, const UINT& z)
@@ -162,7 +159,7 @@ namespace RIPEMD_160 {
 				A1 = E1;
 				E1 = D1;
 				D1 = rol(C1, 10);
-				C1 = B1; 
+				C1 = B1;
 				B1 = T;
 				
 				T  = A2 + f((79 - j) / 16, B2, C2, D2);
@@ -188,9 +185,13 @@ namespace RIPEMD_160 {
 		}
 
 		for (auto h : h)
-			cout << hex << h << ' ';
+		{
+			for(auto i = 0; i < 4; i++)
+				 cout << hex << setw(2) << setfill('0') << ((h >> (i * 8)) & 0xFF);
+			cout << ' ';
+		}
 		cout << endl;
-
+	
 		return "Done";
 	}
 }
