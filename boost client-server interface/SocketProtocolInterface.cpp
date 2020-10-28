@@ -1,5 +1,7 @@
 #include "SocketProtocolInterface.hpp"
 
+#define BUFFER 1024
+
 //////////////////////////////////////////////////////////////////////
 ////////////////////////////SERVER////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
@@ -20,7 +22,6 @@ void SPI::Server::Session()
 {
 	try {
 		m_state = successed;
-		
 		m_mutex.unlock();
 		while (true)
 		{
@@ -31,7 +32,7 @@ void SPI::Server::Session()
 				));
 			m_socket.push_back(move(socket_ptr(new tcp::socket(*m_io_service.back()))));
 			m_acceptor.back()->accept(*m_socket.back());
-			if(m_socket.back()->is_open())
+			if (m_socket.back()->is_open())
 				std::cout << "Клиент подключен\n";
 		}
 	}
@@ -54,7 +55,7 @@ void SPI::Server::ReadSession()
 				continue;
 			}
 			std::string data;
-			data.resize(1024);
+			data.resize(BUFFER);
 			auto buffer = boost::asio::buffer(&data[0], data.size());
 			boost::asio::read(*socket, buffer);
 			m_data.received.push_back(std::move(data));
@@ -83,7 +84,7 @@ void SPI::Server::WriteSession()
 			}
 			for (auto& Message : m_data.send)
 			{
-				Message.resize(1024);
+				Message.resize(BUFFER);
 				auto buffer = boost::asio::buffer(&Message[0], Message.size());
 				boost::asio::write(*socket, buffer);
 			}
@@ -106,20 +107,25 @@ void SPI::Server::PushMessage(std::string message)
 	WriteSession();
 }
 
-std::string SPI::Server::PullMessage()
+void SPI::Server::PullMessage(std::string& message)
 {
-	ReadSession();
-	
-	if (m_data.received.size())
-	{
-		while (m_data.received.front().empty())
-			m_data.received.erase(m_data.received.begin());
-	}
+	do {
+		ReadSession();
 
-	if (m_data.received.empty())
-		return "";
-	else
-		return std::move(m_data.received.front());
+		if (m_data.received.size())
+		{
+			while (m_data.received.front().empty())
+				m_data.received.erase(m_data.received.begin());
+		}
+
+		if (m_data.received.empty())
+			message.clear();
+		else
+			message = std::move(m_data.received.front());
+	} while (message.empty());
+
+	while (!message.back())
+		message.pop_back();
 }
 
 SPI::STATE SPI::Server::State()
@@ -190,7 +196,7 @@ void SPI::Client::ReadSession()
 	try {
 		if (!m_socket->is_open()) return;
 		std::string data;
-		data.resize(1024);
+		data.resize(BUFFER);
 		auto buffer = boost::asio::buffer(&data[0], data.size());
 		boost::asio::read(*m_socket, buffer);
 		m_data.received.push_back(std::move(data));
@@ -213,7 +219,7 @@ void SPI::Client::WriteSession()
 		if (!m_socket->is_open()) return;
 		for (auto& Message : m_data.send)
 		{
-			Message.resize(1024);
+			Message.resize(BUFFER);
 			auto buffer = boost::asio::buffer(&Message[0], Message.size());
 			boost::asio::write(*m_socket, buffer);
 		}
@@ -232,20 +238,25 @@ void SPI::Client::PushMessage(std::string message)
 	WriteSession();
 }
 
-std::string SPI::Client::PullMessage()
+void SPI::Client::PullMessage(std::string& message)
 {
-	ReadSession();
+	do {
+		ReadSession();
 
-	if (m_data.received.size())
-	{
-		while (m_data.received.front().empty())
-			m_data.received.erase(m_data.received.begin());
-	}
+		if (m_data.received.size())
+		{
+			while (m_data.received.front().empty())
+				m_data.received.erase(m_data.received.begin());
+		}
 
-	if (m_data.received.empty())
-		return "";
-	else
-		return std::move(m_data.received.front());
+		if (m_data.received.empty())
+			message.clear();
+		else
+			message = std::move(m_data.received.front());
+	} while (message.empty());
+
+	while (!message.back())
+		message.pop_back();
 }
 
 SPI::STATE SPI::Client::State()

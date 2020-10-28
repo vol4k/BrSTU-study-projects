@@ -30,7 +30,7 @@ namespace SPI {
 		Server(const PORT&);
 
 		void PushMessage(std::string);
-		std::string PullMessage();
+		void PullMessage(std::string&);
 		STATE State();
 		bool SocketListIsEmpty();
 	private:
@@ -52,7 +52,7 @@ namespace SPI {
 		Client(const IP&, const PORT&);
 
 		void PushMessage(std::string);
-		std::string PullMessage();
+		void PullMessage(std::string&);
 		STATE State();
 	private:
 		void Session();
