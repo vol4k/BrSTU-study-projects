@@ -6,6 +6,14 @@
 	Полученное число должно быть такой же длины 
 	и не содержать лидирующих нулей.
 	Если такого числа не существует, то выведите -1
+
+	Andersen2020 training task "A. Permutation of numbers"
+	In a given number, you need to rearrange the digits so that
+	so that two identical numbers and a number are not next to each other
+	turned out to be the best possible.
+	The resulting number must be the same length
+	and not contain leading zeros.
+	If there is no such number, print -1
 */
 
 #include <iostream>

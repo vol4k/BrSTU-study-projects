@@ -11,7 +11,7 @@ SPI::Server::Server(const PORT& port)
 	m_port = port;
 	m_state = init;
 
-	std::cout << "Сервер запущен на " << m_port << "-м порту" << std::endl;
+	std::cout << "Server run on port: " << m_port << std::endl;
 	
 	m_mutex.lock();	// locking for initialisation
 	
@@ -33,7 +33,7 @@ void SPI::Server::Session()
 			m_socket.push_back(move(socket_ptr(new tcp::socket(*m_io_service.back()))));
 			m_acceptor.back()->accept(*m_socket.back());
 			if (m_socket.back()->is_open())
-				std::cout << "Клиент подключен\n";
+				std::cout << "Client connected!\n";
 		}
 	}
 	catch (std::exception & e)
@@ -153,7 +153,7 @@ SPI::Client::Client(const IP& ip, const PORT& port)
 	m_port = port;
 	m_state = init;
 
-	std::cout << "Попытка подключиться к серверу " << m_ip << ':' << m_port << std::endl;
+	std::cout << "Trying to connect to " << m_ip << ':' << m_port << std::endl;
 	m_mutex.lock();	// locking for initialisation
 	boost::thread t(boost::bind(&Client::Session, this));
 }
@@ -169,12 +169,12 @@ void SPI::Client::Session()
 
 		if (m_socket->is_open())
 		{
-			std::cout << m_ip << ':' << m_port << " - подключение удалось" << std::endl;
+			std::cout << m_ip << ':' << m_port << " - connection succesful" << std::endl;
 			m_state = successed;
 		}
 		else
 		{
-			std::cout << m_ip << ':' << m_port << " - подключение не удалось" << std::endl;
+			std::cout << m_ip << ':' << m_port << " - connection faild" << std::endl;
 			m_state = failed;
 		}
 	}

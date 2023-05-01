@@ -10,15 +10,15 @@ void main() {
 	size_t bits;
 	char color;
 
-	cout << "Укажите путь к файлу или перетащите его сюда: ";
+	cout << "Write file path or drag and drop here: ";
 	getline(cin, patch);
 
-	cout << "Сколько бит подвергнуть инвертированию: ";
+	cout << "How mutch bits must be inverted: ";
 	cin >> bits;
 
 	bool repeat = true;
 	do {
-		cout << "Над каким цветом производить инвертирование(RGB): ";
+		cout << "What color must been inverted(RGB): ";
 		cin >> color;
 		switch (color) {
 		case 'R':

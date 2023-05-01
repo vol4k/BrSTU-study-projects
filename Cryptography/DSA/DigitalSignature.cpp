@@ -242,7 +242,7 @@ namespace DS
 	}
 
 	mp::cpp_int DSA::inverse(mp::cpp_int a, mp::cpp_int n)
-		/* вычисление инверсии модуля n */
+		/* module inversion calculation */
 	{
 		auto xd = extended_euclid(a, n);
 		if (xd.second == 1) return (xd.first + n) % n;

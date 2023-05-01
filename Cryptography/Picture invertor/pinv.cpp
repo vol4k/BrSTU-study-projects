@@ -11,7 +11,7 @@ void pinv::transform(const string& patch, BYTE bits, const char& color) {
 
 	if (!is_BMP(patch)) {
 		std::cerr << "Incorrect format." << std::endl << "Please, use bitmap-picture format" << std::endl;
-		return; // некорректный формат
+		return; // Incorrect format
 	}
 
 	inverseColorBits(patch, bits, color);
@@ -30,11 +30,11 @@ FILE* pinv::getDropHandle(string patch) {
 
 void pinv::inverseColorBits(const string& patch, const BYTE& bits, const char& RGB) {
 	FILE* stream = getPictureHandle(patch);
-	if (!stream) return; // файл не был открыт
+	if (!stream) return; // The file was not opened
 
 	FILE* drop = getDropHandle(patch);
 
-	//Считываю fileheader
+	// Read fileheader
 
 	tagBITMAPFILEHEADER* file_header = new tagBITMAPFILEHEADER();
 	fread(&file_header->bfType, sizeof(WORD), 1, stream);
@@ -43,7 +43,7 @@ void pinv::inverseColorBits(const string& patch, const BYTE& bits, const char& R
 	fread(&file_header->bfReserved2, sizeof(WORD), 1, stream);
 	fread(&file_header->bfOffBits, sizeof(DWORD), 1, stream);
 
-	//Считываю infoheader
+	// Read infoheader
 
 	tagBITMAPINFOHEADER* file_infoheader = new tagBITMAPINFOHEADER();
 	fread(&file_infoheader->biSize, sizeof(DWORD), 1, stream);
@@ -58,7 +58,7 @@ void pinv::inverseColorBits(const string& patch, const BYTE& bits, const char& R
 	fread(&file_infoheader->biClrUsed, sizeof(DWORD), 1, stream);
 	fread(&file_infoheader->biClrImportant, sizeof(DWORD), 1, stream);
 
-	//Считываю пиксели
+	// Read pixels
 
 	int size = file_infoheader->biWidth * file_infoheader->biHeight * file_infoheader->biBitCount / 8;
 	tagRGBQUAD* data = new tagRGBQUAD[size];
@@ -80,7 +80,7 @@ void pinv::inverseColorBits(const string& patch, const BYTE& bits, const char& R
 		}
 	}
 
-	//Записываю изображение
+	// Write image data
 	size /= file_infoheader->biBitCount / 8;
 
 	fwrite(file_header, sizeof(tagBITMAPFILEHEADER), 1, drop);
